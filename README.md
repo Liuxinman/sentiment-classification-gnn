@@ -9,13 +9,14 @@
 
 ## TODOs
 
--   [ ] 跑通ASGCN (配置环境，benchmark rest14) (3.28 ~ 4.1)
--   [ ] 研究ASGCN embedding部分的代码，提供如何改为pretrained bert的思路
--   [ ] 将glove/lstm embedding替换为pretrained bert
--   [ ] 将conv aggregate改为attention （GCN -> GAT）
+-   [x] 跑通ASGCN (配置环境，benchmark rest14) (3.28 ~ 4.1)
+-   [ ] 研究ASGCN embedding部分的代码，提供如何改为pretrained bert的思路 (4.2 ~ 4.7)(Ruixuan, Xinman)
+-   [ ] 将glove/lstm embedding替换为pretrained bert (4.2 ~ 4.7)(Ruixuan, Xinman)
+-   [ ] 将conv aggregate改为attention（GCN -> GAT）(4.2 ~ 4.7)(Xinrong)
 -   [ ] Train GCN, GAT, ATAE-LSTM
 -   [ ] Test
 
 ## Meetings
 
--   [ ] 4.1 Saturday / 4.2 Sunday
+-   [x] 4.2 Sunday 11:00am
+-   [ ] 4.8 Saturday 11:00am
