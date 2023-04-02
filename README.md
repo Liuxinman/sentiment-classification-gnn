@@ -1,4 +1,5 @@
 # sentiment-classification-gnn
+This is a course project for CSC2516, aimed at exploring the application of GNN in solving sentiment analysis tasks. The code in this repository is heavily dependent on [ASGCN](https://github.com/GeneZC/ASGCN).
 
 ## Resources
 
