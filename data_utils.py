@@ -16,8 +16,8 @@ def load_word_vec(path, word2idx=None, embed_dim=300):
 
 
 def build_embedding_matrix(word2idx, embed_dim, type):
-    embedding_matrix_file_name = '{0}_{1}_embedding_matrix.pkl'.format(str(embed_dim), type)
-    if (embedding_matrix_file_name):
+    embedding_matrix_file_name = '/content/sentiment-classification-gnn/{0}_{1}_embedding_matrix.pkl'.format(str(embed_dim), type)
+    if os.path.exists(embedding_matrix_file_name):
         print('loading embedding_matrix:', embedding_matrix_file_name)
         embedding_matrix = pickle.load(open(embedding_matrix_file_name, 'rb'))
     else:
