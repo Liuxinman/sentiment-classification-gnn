@@ -93,9 +93,9 @@ class Instructor:
                     print('loss: {:.4f}, acc: {:.4f}, test_acc: {:.4f}, test_f1: {:.4f}'.format(loss.item(), train_acc, test_acc, test_f1))
             if increase_flag == False:
                 continue_not_increase += 1
-                if continue_not_increase >= 5:
-                    print('early stop.')
-                    break
+                #if continue_not_increase >= 5:
+                    #print('early stop.')
+                   #break
             else:
                 continue_not_increase = 0
         return max_test_acc, max_test_f1
@@ -150,8 +150,8 @@ class Instructor:
             print('#' * 100)
         print("max_test_acc_avg:", max_test_acc_avg / repeats)
         print("max_test_f1_avg:", max_test_f1_avg / repeats)
+        return(max_test_acc_avg / repeats,max_test_f1_avg / repeats)
 
-        f_out.close()
 
 
 if __name__ == '__main__':
