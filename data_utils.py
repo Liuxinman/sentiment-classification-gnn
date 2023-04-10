@@ -17,7 +17,7 @@ def load_word_vec(path, word2idx=None, embed_dim=300):
 
 def build_embedding_matrix(word2idx, embed_dim, type):
     embedding_matrix_file_name = '{0}_{1}_embedding_matrix.pkl'.format(str(embed_dim), type)
-    if embedding_matrix_file_name:
+    if (embedding_matrix_file_name):
         print('loading embedding_matrix:', embedding_matrix_file_name)
         embedding_matrix = pickle.load(open(embedding_matrix_file_name, 'rb'))
     else:
