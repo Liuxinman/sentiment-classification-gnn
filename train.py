@@ -10,7 +10,7 @@ import torch.nn as nn
 from bucket_iterator import BucketIterator
 from sklearn import metrics
 from data_utils import ABSADatesetReader
-from models import LSTM, ASCNN, ASGCN, ASTCN
+from models import LSTM, ASCNN, ASGCN, ASTCN,ASGAT
 
 class Instructor:
     def __init__(self, opt):
@@ -97,7 +97,7 @@ class Instructor:
                     print('early stop.')
                     break
             else:
-                continue_not_increase = 0    
+                continue_not_increase = 0
         return max_test_acc, max_test_f1
 
     def _evaluate_acc_f1(self):
@@ -128,7 +128,7 @@ class Instructor:
     def run(self, repeats=3):
         # Loss and Optimizer
         criterion = nn.CrossEntropyLoss()
-        
+
         if not os.path.exists('log/'):
             os.mkdir('log/')
 
@@ -179,12 +179,14 @@ if __name__ == '__main__':
         'ascnn': ASCNN,
         'asgcn': ASGCN,
         'astcn': ASTCN,
+        'asgat': ASGAT,
     }
     input_colses = {
         'lstm': ['text_indices'],
         'ascnn': ['text_indices', 'aspect_indices', 'left_indices'],
         'asgcn': ['text_indices', 'aspect_indices', 'left_indices', 'dependency_graph'],
         'astcn': ['text_indices', 'aspect_indices', 'left_indices', 'dependency_tree'],
+        'asgat': ['text_indices', 'aspect_indices', 'left_indices', 'dependency_tree'],
     }
     initializers = {
         'xavier_uniform_': torch.nn.init.xavier_uniform_,

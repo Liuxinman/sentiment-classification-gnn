@@ -146,7 +146,7 @@ class ABSADatesetReader:
                 'test': '/content/sentiment-classification-gnn/datasets/acl-14-short-data/test.raw'
             },
             'rest14': {
-                'train': './content/sentiment-classification-gnn/datasets/semeval14/restaurant_train.raw',
+                'train': '/content/sentiment-classification-gnn/datasets/semeval14/restaurant_train.raw',
                 'test': '/content/sentiment-classification-gnn/datasets/semeval14/restaurant_test.raw'
             },
             'lap14': {
