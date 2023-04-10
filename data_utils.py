@@ -17,14 +17,14 @@ def load_word_vec(path, word2idx=None, embed_dim=300):
 
 def build_embedding_matrix(word2idx, embed_dim, type):
     embedding_matrix_file_name = '{0}_{1}_embedding_matrix.pkl'.format(str(embed_dim), type)
-    if os.path.exists(embedding_matrix_file_name):
+    if embedding_matrix_file_name:
         print('loading embedding_matrix:', embedding_matrix_file_name)
         embedding_matrix = pickle.load(open(embedding_matrix_file_name, 'rb'))
     else:
         print('loading word vectors ...')
         embedding_matrix = np.zeros((len(word2idx), embed_dim))  # idx 0 and 1 are all-zeros
         embedding_matrix[1, :] = np.random.uniform(-1/np.sqrt(embed_dim), 1/np.sqrt(embed_dim), (1, embed_dim))
-        fname = './glove/glove.840B.300d.txt'
+        fname = '/content/sentiment-classification-gnn/glove/glove.840B.300d.txt'
         word_vec = load_word_vec(fname, word2idx=word2idx, embed_dim=embed_dim)
         print('building embedding_matrix:', embedding_matrix_file_name)
         for word, i in word2idx.items():
@@ -142,24 +142,24 @@ class ABSADatesetReader:
         print("preparing {0} dataset ...".format(dataset))
         fname = {
             'twitter': {
-                'train': './datasets/acl-14-short-data/train.raw',
-                'test': './datasets/acl-14-short-data/test.raw'
+                'train': '/content/sentiment-classification-gnn/datasets/acl-14-short-data/train.raw',
+                'test': '/content/sentiment-classification-gnn/datasets/acl-14-short-data/test.raw'
             },
             'rest14': {
-                'train': './datasets/semeval14/restaurant_train.raw',
-                'test': './datasets/semeval14/restaurant_test.raw'
+                'train': './content/sentiment-classification-gnn/datasets/semeval14/restaurant_train.raw',
+                'test': '/content/sentiment-classification-gnn/datasets/semeval14/restaurant_test.raw'
             },
             'lap14': {
-                'train': './datasets/semeval14/laptop_train.raw',
-                'test': './datasets/semeval14/laptop_test.raw'
+                'train': '/content/sentiment-classification-gnn/datasets/semeval14/laptop_train.raw',
+                'test': '/content/sentiment-classification-gnn/datasets/semeval14/laptop_test.raw'
             },
             'rest15': {
-                'train': './datasets/semeval15/restaurant_train.raw',
-                'test': './datasets/semeval15/restaurant_test.raw'
+                'train': '/content/sentiment-classification-gnn/datasets/semeval15/restaurant_train.raw',
+                'test': '/content/sentiment-classification-gnn/datasets/semeval15/restaurant_test.raw'
             },
             'rest16': {
-                'train': './datasets/semeval16/restaurant_train.raw',
-                'test': './datasets/semeval16/restaurant_test.raw'
+                'train': '/content/sentiment-classification-gnn/datasets/semeval16/restaurant_train.raw',
+                'test': '/content/sentiment-classification-gnn/datasets/semeval16/restaurant_test.raw'
             },
 
         }
@@ -177,4 +177,3 @@ class ABSADatesetReader:
         self.embedding_matrix = build_embedding_matrix(tokenizer.word2idx, embed_dim, dataset)
         self.train_data = ABSADataset(ABSADatesetReader.__read_data__(fname[dataset]['train'], tokenizer))
         self.test_data = ABSADataset(ABSADatesetReader.__read_data__(fname[dataset]['test'], tokenizer))
-    
