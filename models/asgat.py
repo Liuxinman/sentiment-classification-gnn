@@ -7,12 +7,12 @@ import torch.nn.functional as F
 from layers.dynamic_rnn import DynamicLSTM
 
 
-class GraphConvolution(nn.Module):
+class GraphAttention(nn.Module):
     """
     Simple GCN layer, similar to https://arxiv.org/abs/1609.02907
     """
     def __init__(self, in_features, out_features, n_heads = 8,bias=True):
-        super(GraphConvolution, self).__init__()
+        super(GraphAttention, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
         self.is_concat = True
@@ -91,8 +91,8 @@ class ASGAT(nn.Module):
         self.n_heads = 8
         self.embed = nn.Embedding.from_pretrained(torch.tensor(embedding_matrix, dtype=torch.float))
         self.text_lstm = DynamicLSTM(opt.embed_dim, opt.hidden_dim, num_layers=1, batch_first=True, bidirectional=True)
-        self.gc1 = GraphConvolution(2*opt.hidden_dim, 2*opt.hidden_dim,self.n_heads)
-        self.gc2 = GraphConvolution(2*opt.hidden_dim, 2*opt.hidden_dim,n_heads = 1)
+        self.gat1 = GraphAttention(2*opt.hidden_dim, 2*opt.hidden_dim,self.n_heads)
+        self.gat2 = GraphAttention(2*opt.hidden_dim, 2*opt.hidden_dim,n_heads = 1)
         self.fc = nn.Linear(2*opt.hidden_dim, opt.polarities_dim)
         self.text_embed_dropout = nn.Dropout(0.6)
 
@@ -139,8 +139,8 @@ class ASGAT(nn.Module):
         text = self.embed(text_indices)
         text = self.text_embed_dropout(text)
         text_out, (_, _) = self.text_lstm(text, text_len)
-        x = F.relu(self.gc1(self.position_weight(text_out, aspect_double_idx, text_len, aspect_len), adj))
-        x = F.relu(self.gc2(self.position_weight(x, aspect_double_idx, text_len, aspect_len), adj))
+        x = F.relu(self.gat1(self.position_weight(text_out, aspect_double_idx, text_len, aspect_len), adj))
+        x = F.relu(self.gat2(self.position_weight(x, aspect_double_idx, text_len, aspect_len), adj))
         x = self.mask(x, aspect_double_idx)
         alpha_mat = torch.matmul(x, text_out.transpose(1, 2))
         alpha = F.softmax(alpha_mat.sum(1, keepdim=True), dim=2)
