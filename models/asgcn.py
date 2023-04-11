@@ -61,14 +61,15 @@ class ASGCN(nn.Module):
         self.opt = opt
         self.use_bert = opt.use_bert
         if self.use_bert:
-            self.embed = BertEmbedding(2 * opt.hidden_dim, self.opt.bert_version, self.opt.device)
+            # self.embed = BertEmbedding(2 * opt.hidden_dim, self.opt.bert_version, self.opt.device)
+            self.embed = BertEmbedding(opt.embed_dim, self.opt.bert_version, self.opt.device)
         else:
             self.embed = nn.Embedding.from_pretrained(
                 torch.tensor(embedding_matrix, dtype=torch.float)
             )
-            self.text_lstm = DynamicLSTM(
-                opt.embed_dim, opt.hidden_dim, num_layers=1, batch_first=True, bidirectional=True
-            )
+        self.text_lstm = DynamicLSTM(
+            opt.embed_dim, opt.hidden_dim, num_layers=1, batch_first=True, bidirectional=True
+        )
         self.gc1 = GraphConvolution(2 * opt.hidden_dim, 2 * opt.hidden_dim)
         self.gc2 = GraphConvolution(2 * opt.hidden_dim, 2 * opt.hidden_dim)
         self.fc = nn.Linear(2 * opt.hidden_dim, opt.polarities_dim)
@@ -127,11 +128,11 @@ class ASGCN(nn.Module):
         )
         if self.use_bert:
             text = self.embed(text_indices_bert, token_type_ids, attention_mask, word_ids, text_len)
-            text_out = self.text_embed_dropout(text)
+            text = self.text_embed_dropout(text)
         else:
             text = self.embed(text_indices)
             text = self.text_embed_dropout(text)
-            text_out, (_, _) = self.text_lstm(text, text_len)
+        text_out, (_, _) = self.text_lstm(text, text_len)
         assert text.shape[1] == max(text_len), "emb seq len does not match text len"
         x = F.relu(
             self.gc1(self.position_weight(text_out, aspect_double_idx, text_len, aspect_len), adj)
