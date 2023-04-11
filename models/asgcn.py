@@ -50,6 +50,7 @@ class BertEmbedding(nn.Module):
                 all_token_embeddings[i, _id, :] = torch.nan_to_num(
                     sentence_hidden_states[i][word_ids[i] == _id].mean(dim=0)
                 )
+        all_token_embeddings.to(self.device)
         all_token_embeddings = self.linear(all_token_embeddings)
         return all_token_embeddings
 
