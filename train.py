@@ -18,7 +18,7 @@ class Instructor:
         self.opt = opt
 
         absa_dataset = ABSADatesetReader(
-            dataset=opt.dataset, embed_dim=opt.embed_dim, use_bert=opt.use_bert
+            dataset=opt.dataset, embed_dim=opt.embed_dim, use_bert=opt.use_bert, bert_version=opt.bert_version
         )
 
         self.train_data_loader = BucketIterator(
@@ -29,6 +29,10 @@ class Instructor:
         )
 
         self.model = opt.model_class(absa_dataset.embedding_matrix, opt).to(opt.device)
+        if opt.frozen_bert:
+            for name, p in self.model.named_parameters():
+                if "bert_model" in name:
+                    p.requires_grad = False
         self._print_args()
         self.global_f1 = 0.0
 
@@ -53,8 +57,8 @@ class Instructor:
             print(">>> {0}: {1}".format(arg, getattr(self.opt, arg)))
 
     def _reset_params(self):
-        for p in self.model.parameters():
-            if p.requires_grad:
+        for name, p in self.model.named_parameters():
+            if "bert_model" not in name and p.requires_grad:
                 if len(p.shape) > 1:
                     self.opt.initializer(p)
                 else:
@@ -114,7 +118,7 @@ class Instructor:
                     )
             if increase_flag == False:
                 continue_not_increase += 1
-                if continue_not_increase >= 5:
+                if continue_not_increase >= 10:
                     print("early stop.")
                     break
             else:
@@ -207,6 +211,8 @@ if __name__ == "__main__":
     parser.add_argument("--seed", default=776, type=int)
     parser.add_argument("--device", default=None, type=str)
     parser.add_argument("--use_bert", action="store_true")
+    parser.add_argument("--bert_version", default="prajjwal1/bert-small", type=str)
+    parser.add_argument("--frozen_bert", action="store_true")
     opt = parser.parse_args()
 
     model_classes = {

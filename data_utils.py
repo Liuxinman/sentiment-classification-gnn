@@ -179,7 +179,7 @@ class ABSADatesetReader:
             all_data.append(data)
         return all_data
 
-    def __init__(self, dataset="twitter", embed_dim=300, use_bert=False):
+    def __init__(self, dataset="twitter", embed_dim=300, use_bert=False, bert_version="prajjwal1/bert-small"):
         print("preparing {0} dataset ...".format(dataset))
         fname = {
             "twitter": {
@@ -205,7 +205,7 @@ class ABSADatesetReader:
         }
         self.embedding_matrix = None
         if use_bert:
-            tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+            tokenizer = AutoTokenizer.from_pretrained(bert_version)
             self.train_data = ABSADataset(
                 ABSADatesetReader.__read_data__(fname[dataset]["train"], tokenizer, use_bert=True)
             )

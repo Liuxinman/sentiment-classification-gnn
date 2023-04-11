@@ -34,10 +34,10 @@ class GraphConvolution(nn.Module):
 
 
 class BertEmbedding(nn.Module):
-    def __init__(self, emb_dim, device) -> None:
+    def __init__(self, emb_dim, bert_version, device) -> None:
         super(BertEmbedding, self).__init__()
-        self.bert_model = BertModel.from_pretrained("bert-base-uncased")
-        self.linear = nn.Linear(768, emb_dim)
+        self.bert_model = BertModel.from_pretrained(bert_version)
+        self.linear = nn.Linear(self.bert_model.config.hidden_size, emb_dim)
         self.device = device
 
     def forward(self, input_ids, token_type_ids, attention_mask, word_ids, token_lengths):
@@ -50,7 +50,6 @@ class BertEmbedding(nn.Module):
                 all_token_embeddings[i, _id, :] = torch.nan_to_num(
                     sentence_hidden_states[i][word_ids[i] == _id].mean(dim=0)
                 )
-        all_token_embeddings.requires_grad_()
         all_token_embeddings = self.linear(all_token_embeddings)
         return all_token_embeddings
 
@@ -61,7 +60,7 @@ class ASGCN(nn.Module):
         self.opt = opt
         self.use_bert = opt.use_bert
         if self.use_bert:
-            self.embed = BertEmbedding(2 * opt.hidden_dim, self.opt.device)
+            self.embed = BertEmbedding(2 * opt.hidden_dim, self.opt.bert_version, self.opt.device)
         else:
             self.embed = nn.Embedding.from_pretrained(
                 torch.tensor(embedding_matrix, dtype=torch.float)
