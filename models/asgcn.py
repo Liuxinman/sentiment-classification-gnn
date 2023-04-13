@@ -72,7 +72,7 @@ class ASGCN(nn.Module):
             for j in range(aspect_double_idx[i,1]+1, seq_len):
                 mask[i].append(0)
         mask = torch.tensor(mask, dtype=torch.float).unsqueeze(2).to(self.opt.device)
-        return mask*x, mask.squeeze(2)
+        return mask*x
 
     def forward(self, inputs):
         text_indices, aspect_indices, left_indices, adj = inputs
@@ -80,22 +80,14 @@ class ASGCN(nn.Module):
         aspect_len = torch.sum(aspect_indices != 0, dim=-1)
         left_len = torch.sum(left_indices != 0, dim=-1)
         aspect_double_idx = torch.cat([left_len.unsqueeze(1), (left_len+aspect_len-1).unsqueeze(1)], dim=1)
-
         text = self.embed(text_indices)
-        text = self.text_embed_dropout(text) 
+        text = self.text_embed_dropout(text)
         text_out, (_, _) = self.text_lstm(text, text_len)
-
         x = F.relu(self.gc1(self.position_weight(text_out, aspect_double_idx, text_len, aspect_len), adj))
         x = F.relu(self.gc2(self.position_weight(x, aspect_double_idx, text_len, aspect_len), adj))
-        aspect_x, mask = self.mask(x, aspect_double_idx)
-
-        if self.opt.aspect_only_classifier:
-            asp_wn = aspect_len.unsqueeze(-1)                              # aspect words num
-            mask = mask.unsqueeze(-1).repeat(1,1,2*self.opt.hidden_dim)    # mask for h
-            outputs = (x*mask).sum(dim=1) / asp_wn                         # mask h
-        else:
-            alpha_mat = torch.matmul(aspect_x, text_out.transpose(1, 2))
-            alpha = F.softmax(alpha_mat.sum(1, keepdim=True), dim=2)
-            outputs = torch.matmul(alpha, text_out).squeeze(1) # batch_size x 2*hidden_dim
-        output = self.fc(outputs)
+        x = self.mask(x, aspect_double_idx)
+        alpha_mat = torch.matmul(x, text_out.transpose(1, 2))
+        alpha = F.softmax(alpha_mat.sum(1, keepdim=True), dim=2)
+        x = torch.matmul(alpha, text_out).squeeze(1) # batch_size x 2*hidden_dim
+        output = self.fc(x)
         return output

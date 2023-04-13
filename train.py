@@ -172,7 +172,6 @@ if __name__ == '__main__':
     parser.add_argument('--save', default=False, type=bool)
     parser.add_argument('--seed', default=776, type=int)
     parser.add_argument('--device', default=None, type=str)
-    parser.add_argument('--aspect_only_classifier', action="store_true")
     opt = parser.parse_args()
 
     model_classes = {
