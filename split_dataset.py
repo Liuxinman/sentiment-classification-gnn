@@ -83,10 +83,13 @@ def save_to_txt(fpath, fname, splited_data, splited_graph, splited_tree):
 
 
 if __name__ == "__main__":
-    fpath = "./datasets/semeval14"
+    dataset = "semeval14"
+    fpath = f"./datasets/{dataset}"
     fnames = [
         "restaurant_train.raw",
-        # "restaurant_text.raw",
+        "restaurant_text.raw",
+        "laptop_train.raw",
+        "laptop_text.raw",
     ]
     for fname in fnames:
         splited_data, splited_graph, splited_tree = split_dataset(f"{fpath}/{fname}")
