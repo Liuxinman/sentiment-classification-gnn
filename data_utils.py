@@ -167,20 +167,21 @@ class ABSADatesetReader:
         for i in range(1, 10):
             fname[f"rest14_{i}"] = {}
             fname[f"rest14_{i}"]["train"] = f"./datasets/semeval14/splited_rest/restaurant_train.raw.{i}"
-            fname[f"rest14_{i}"]["text"] = f"./datasets/semeval14/splited_rest/restaurant_text.raw.{i}"
+            fname[f"rest14_{i}"]["test"] = f"./datasets/semeval14/splited_rest/restaurant_test.raw.{i}"
 
-        text = ABSADatesetReader.__read_text__([fname[dataset]['train'], fname[dataset]['test']])
-        if os.path.exists(dataset+'_word2idx.pkl'):
-            print("loading {0} tokenizer...".format(dataset))
-            with open(dataset+'_word2idx.pkl', 'rb') as f:
+        head_dataset = dataset.split("_")[0]
+        text = ABSADatesetReader.__read_text__([fname[head_dataset]['train'], fname[head_dataset]['test']])
+        if os.path.exists(head_dataset+'_word2idx.pkl'):
+            print("loading {0} tokenizer...".format(head_dataset))
+            with open(head_dataset+'_word2idx.pkl', 'rb') as f:
                  word2idx = pickle.load(f)
                  tokenizer = Tokenizer(word2idx=word2idx)
         else:
             tokenizer = Tokenizer()
             tokenizer.fit_on_text(text)
-            with open(dataset+'_word2idx.pkl', 'wb') as f:
+            with open(head_dataset+'_word2idx.pkl', 'wb') as f:
                  pickle.dump(tokenizer.word2idx, f)
-        self.embedding_matrix = build_embedding_matrix(tokenizer.word2idx, embed_dim, dataset)
+        self.embedding_matrix = build_embedding_matrix(tokenizer.word2idx, embed_dim, head_dataset)
         self.train_data = ABSADataset(ABSADatesetReader.__read_data__(fname[dataset]['train'], tokenizer))
         self.test_data = ABSADataset(ABSADatesetReader.__read_data__(fname[dataset]['test'], tokenizer))
     

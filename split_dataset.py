@@ -87,9 +87,9 @@ if __name__ == "__main__":
     fpath = f"./datasets/{dataset}"
     fnames = [
         "restaurant_train.raw",
-        "restaurant_text.raw",
-        "laptop_train.raw",
-        "laptop_text.raw",
+        "restaurant_test.raw",
+        # "laptop_train.raw",
+        # "laptop_test.raw",
     ]
     for fname in fnames:
         splited_data, splited_graph, splited_tree = split_dataset(f"{fpath}/{fname}")
