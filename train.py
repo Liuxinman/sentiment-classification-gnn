@@ -93,9 +93,9 @@ class Instructor:
                     print('loss: {:.4f}, acc: {:.4f}, test_acc: {:.4f}, test_f1: {:.4f}'.format(loss.item(), train_acc, test_acc, test_f1))
             if increase_flag == False:
                 continue_not_increase += 1
-                #if continue_not_increase >= 5:
-                    #print('early stop.')
-                   #break
+                if continue_not_increase >= 5:
+                    print('early stop.')
+                   break
             else:
                 continue_not_increase = 0
         return max_test_acc, max_test_f1
@@ -125,7 +125,7 @@ class Instructor:
         f1 = metrics.f1_score(t_targets_all.cpu(), torch.argmax(t_outputs_all, -1).cpu(), labels=[0, 1, 2], average='macro')
         return test_acc, f1
 
-    def run(self, repeats=1):
+    def run(self, repeats=3):
         # Loss and Optimizer
         criterion = nn.CrossEntropyLoss()
 
