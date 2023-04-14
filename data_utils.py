@@ -166,8 +166,8 @@ class ABSADatesetReader:
         
         for i in range(1, 10):
             fname[f"rest14_{i}"] = {}
-            fname[f"rest14_{i}"]["train"] = f"./datasets/semeval14/restaurant_train.raw.{i}"
-            fname[f"rest14_{i}"]["text"] = f"./datasets/semeval14/restaurant_text.raw.{i}"
+            fname[f"rest14_{i}"]["train"] = f"./datasets/semeval14/splited_rest/restaurant_train.raw.{i}"
+            fname[f"rest14_{i}"]["text"] = f"./datasets/semeval14/splited_rest/restaurant_text.raw.{i}"
 
         text = ABSADatesetReader.__read_text__([fname[dataset]['train'], fname[dataset]['test']])
         if os.path.exists(dataset+'_word2idx.pkl'):
