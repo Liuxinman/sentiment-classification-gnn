@@ -88,7 +88,8 @@ class ASGAT(nn.Module):
     def __init__(self, embedding_matrix, opt):
         super(ASGAT, self).__init__()
         self.opt = opt
-        self.n_heads = 8
+        #self.n_heads = 8
+        self.n_heads = opt.heads
         self.embed = nn.Embedding.from_pretrained(torch.tensor(embedding_matrix, dtype=torch.float))
         self.text_lstm = DynamicLSTM(opt.embed_dim, opt.hidden_dim, num_layers=1, batch_first=True, bidirectional=True)
         self.gat1 = GraphAttention(2*opt.hidden_dim, 2*opt.hidden_dim,self.n_heads)
@@ -128,7 +129,7 @@ class ASGAT(nn.Module):
             for j in range(aspect_double_idx[i,1]+1, seq_len):
                 mask[i].append(0)
         mask = torch.tensor(mask, dtype=torch.float).unsqueeze(2).to(self.opt.device)
-        return mask*x
+        return mask*x, mask.squeeze(2)
 
     def forward(self, inputs):
         text_indices, aspect_indices, left_indices, adj = inputs
@@ -141,9 +142,16 @@ class ASGAT(nn.Module):
         text_out, (_, _) = self.text_lstm(text, text_len)
         x = F.relu(self.gat1(self.position_weight(text_out, aspect_double_idx, text_len, aspect_len), adj))
         x = F.relu(self.gat2(self.position_weight(x, aspect_double_idx, text_len, aspect_len), adj))
-        x = self.mask(x, aspect_double_idx)
-        alpha_mat = torch.matmul(x, text_out.transpose(1, 2))
-        alpha = F.softmax(alpha_mat.sum(1, keepdim=True), dim=2)
-        x = torch.matmul(alpha, text_out).squeeze(1) # batch_size x 2*hidden_dim
-        output = self.fc(x)
+        aspect_x, mask = self.mask(x, aspect_double_idx)
+
+        if self.opt.aspect_only_classifier:
+            asp_wn = aspect_len.unsqueeze(-1)                              # aspect words num
+            mask = mask.unsqueeze(-1).repeat(1,1,2*self.opt.hidden_dim)    # mask for h
+            outputs = (x*mask).sum(dim=1) / asp_wn                         # mask h
+        else:
+            alpha_mat = torch.matmul(aspect_x, text_out.transpose(1, 2))
+            alpha = F.softmax(alpha_mat.sum(1, keepdim=True), dim=2)
+            outputs = torch.matmul(alpha, text_out).squeeze(1) # batch_size x 2*hidden_dim
+        output = self.fc(outputs)
+
         return output
