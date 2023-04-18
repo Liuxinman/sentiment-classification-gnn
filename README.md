@@ -3,10 +3,7 @@ This is a course project for [CSC2516](https://artsci.calendar.utoronto.ca/cours
 We aimed at exploring the application of two different Graph Neural Network(GNN) in solving aspect-based sentiment analysis tasks(ABAS).
 
 ## Abstract
-Aspect-based sentiment analysis is one of the most popular NLP techniques that identifying polarity towards a specific aspect.
-In this paper, we first implemented two deep-learning architectures --Graph Convolutional Network(GCN) and Graph Attention Network(GAT)-- in nowadays aspect-based sentiment analysis.
-We aimed to compare the performance between the two models on common benchmarks Semeval tasks from 2014 to 2016 to explore the best-performed model.
-Finally, we analyzed the difference between the results and discussed the limitations.
+Aspect-based sentiment analysis(ABAS) is one of the most popular NLP techniques that identifying polarity towards a specific aspect, and combining graph with traditional network becomes an essential techniques when solving ABAS. In this paper, we implemented two graph-related deep-learning architectures --Graph Convolutional Network(GCN) and Graph Attention Network(GAT)-- in nowadays aspect-based sentiment analysis.We aimed to compare the performance between the two models. First, we tuned the parameter on common benchmarks Semeval tasks from 2014 to 2016 to explore the best-performed model. Then we introduce the analysis on the effect of multiple number of aspects on two models, which, to our knowledge, is a novel approach in the comparison. Finally, we analyzed the difference between the results and discussed the limitations, which will help us have a better knowledge about Graph Neural Network on ABAS and its possible improvement direction in the future.
 
 ## Requirements
 - Python 3.6
