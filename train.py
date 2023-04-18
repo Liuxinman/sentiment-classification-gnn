@@ -184,7 +184,7 @@ if __name__ == '__main__':
     parser.add_argument('--seed', default=776, type=int)
     parser.add_argument('--device', default=None, type=str)
     parser.add_argument('--heads', default=8, type=int)
-    parser.add_argument('--aspect_only_classifier', default = False, action="store_true")
+    parser.add_argument('--aspect_only_classifier', action="store_true")
 
     opt = parser.parse_args()
 
