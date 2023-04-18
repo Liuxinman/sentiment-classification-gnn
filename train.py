@@ -55,15 +55,15 @@ class Instructor:
         max_test_f1 = 0
         global_step = 0
         continue_not_increase = 0
-        f_out.write('n_heads = '+str(self.opt.heads))
-        f_out.write('\n')
+        #f_out.write('n_heads = '+str(self.opt.heads))
+        #f_out.write('\n')
         for epoch in range(self.opt.num_epoch):
             print('>' * 100)
-            f_out.write('>' * 100)
-            f_out.write('\n')
+            #f_out.write('>' * 100)
+            #f_out.write('\n')
             print('epoch: ', epoch)
-            f_out.write('epoch: '+ str(epoch))
-            f_out.write('\n')
+            #f_out.write('epoch: '+ str(epoch))
+            #f_out.write('\n')
             n_correct, n_total = 0, 0
             increase_flag = False
             for i_batch, sample_batched in enumerate(self.train_data_loader):
@@ -97,15 +97,15 @@ class Instructor:
                             self.global_f1 = test_f1
                             torch.save(self.model.state_dict(), 'state_dict/'+self.opt.model_name+'_'+self.opt.dataset+'.pkl')
                             print('>>> best model saved.')
-                            f_out.write('>>> best model saved.')
+                            #f_out.write('>>> best model saved.')
                     print('loss: {:.4f}, acc: {:.4f}, test_acc: {:.4f}, test_f1: {:.4f}'.format(loss.item(), train_acc, test_acc, test_f1))
-                    f_out.write('loss: {:.4f}, acc: {:.4f}, test_acc: {:.4f}, test_f1: {:.4f}\n'.format(loss.item(), train_acc, test_acc, test_f1))
+                    #f_out.write('loss: {:.4f}, acc: {:.4f}, test_acc: {:.4f}, test_f1: {:.4f}\n'.format(loss.item(), train_acc, test_acc, test_f1))
 
             if increase_flag == False:
                 continue_not_increase += 1
                 if continue_not_increase >= 5:
                     print('early stop.')
-                    f_out.write('early stop.\n')
+                    #f_out.write('early stop.\n')
                     break
             else:
                 continue_not_increase = 0    
@@ -142,13 +142,13 @@ class Instructor:
         if not os.path.exists('log/'):
             os.mkdir('log/')
 
-        f_out = open('log/'+self.opt.model_name+'_'+self.opt.dataset+'_8_0.001_'+str(self.opt.hidden_dim)+'_val.txt', 'w', encoding='utf-8')
+        f_out = open('log/'+self.opt.model_name+'_'+self.opt.dataset+'_'+str(self.opt.hidden_dim)+'_val.txt', 'w', encoding='utf-8')
 
         max_test_acc_avg = 0
         max_test_f1_avg = 0
         for i in range(repeats):
             print('repeat: ', (i+1))
-            f_out.write('repeat: '+str(i+1))
+            #f_out.write('repeat: '+str(i+1))
             self._reset_params()
             _params = filter(lambda p: p.requires_grad, self.model.parameters())
             optimizer = self.opt.optimizer(_params, lr=self.opt.learning_rate, weight_decay=self.opt.l2reg)
@@ -184,7 +184,7 @@ if __name__ == '__main__':
     parser.add_argument('--seed', default=776, type=int)
     parser.add_argument('--device', default=None, type=str)
     parser.add_argument('--heads', default=8, type=int)
-    parser.add_argument('--aspect_only_classifier', action="store_true")
+    parser.add_argument('--aspect_only_classifier', default = False, action="store_true")
 
     opt = parser.parse_args()
 

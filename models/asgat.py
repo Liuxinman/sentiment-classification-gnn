@@ -152,6 +152,7 @@ class ASGAT(nn.Module):
             alpha_mat = torch.matmul(aspect_x, text_out.transpose(1, 2))
             alpha = F.softmax(alpha_mat.sum(1, keepdim=True), dim=2)
             outputs = torch.matmul(alpha, text_out).squeeze(1) # batch_size x 2*hidden_dim
+
         output = self.fc(outputs)
 
         return output
