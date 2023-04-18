@@ -10,7 +10,7 @@ import torch.nn as nn
 from bucket_iterator import BucketIterator
 from sklearn import metrics
 from data_utils import ABSADatesetReader
-from models import LSTM, ASCNN, ASGCN, ASTCN
+from models import LSTM, ASCNN, ASGCN, ASTCN, ASGAT
 
 class Instructor:
     def __init__(self, opt):
@@ -51,14 +51,20 @@ class Instructor:
                     stdv = 1. / math.sqrt(p.shape[0])
                     torch.nn.init.uniform_(p, a=-stdv, b=stdv)
 
-    def _train(self, criterion, optimizer):
+    def _train(self, criterion, optimizer,f_out):
         max_test_acc = 0
         max_test_f1 = 0
         global_step = 0
         continue_not_increase = 0
+        #f_out.write('n_heads = '+str(self.opt.heads))
+        #f_out.write('\n')
         for epoch in range(self.opt.num_epoch):
             print('>' * 100)
+            #f_out.write('>' * 100)
+            #f_out.write('\n')
             print('epoch: ', epoch)
+            #f_out.write('epoch: '+ str(epoch))
+            #f_out.write('\n')
             n_correct, n_total = 0, 0
             increase_flag = False
             for i_batch, sample_batched in enumerate(self.train_data_loader):
@@ -72,6 +78,7 @@ class Instructor:
                 targets = sample_batched['polarity'].to(self.opt.device)
 
                 outputs = self.model(inputs)
+
                 loss = criterion(outputs, targets)
                 loss.backward()
                 optimizer.step()
@@ -91,11 +98,15 @@ class Instructor:
                             self.global_f1 = test_f1
                             torch.save(self.model.state_dict(), 'state_dict/'+self.opt.model_name+'_'+self.opt.dataset+'.pkl')
                             print('>>> best model saved.')
+                            #f_out.write('>>> best model saved.')
                     print('loss: {:.4f}, acc: {:.4f}, test_acc: {:.4f}, test_f1: {:.4f}'.format(loss.item(), train_acc, test_acc, test_f1))
+                    #f_out.write('loss: {:.4f}, acc: {:.4f}, test_acc: {:.4f}, test_f1: {:.4f}\n'.format(loss.item(), train_acc, test_acc, test_f1))
+
             if increase_flag == False:
                 continue_not_increase += 1
                 if continue_not_increase >= 5:
                     print('early stop.')
+                    #f_out.write('early stop.\n')
                     break
             else:
                 continue_not_increase = 0    
@@ -111,7 +122,6 @@ class Instructor:
                 t_inputs = [t_sample_batched[col].to(opt.device) for col in self.opt.inputs_cols]
                 t_targets = t_sample_batched['polarity'].to(opt.device)
                 t_outputs = self.model(t_inputs)
-
                 n_test_correct += (torch.argmax(t_outputs, -1) == t_targets).sum().item()
                 n_test_total += len(t_outputs)
 
@@ -129,21 +139,21 @@ class Instructor:
     def run(self, repeats=3):
         # Loss and Optimizer
         criterion = nn.CrossEntropyLoss()
-        
+
         if not os.path.exists('log/'):
             os.mkdir('log/')
 
-        f_out = open('log/'+self.opt.model_name+'_'+self.opt.dataset+'_val.txt', 'w', encoding='utf-8')
+        f_out = open('log/'+self.opt.model_name+'_'+self.opt.dataset+'_'+str(self.opt.hidden_dim)+'_val.txt', 'w', encoding='utf-8')
 
         max_test_acc_avg = 0
         max_test_f1_avg = 0
         for i in range(repeats):
             print('repeat: ', (i+1))
-            f_out.write('repeat: '+str(i+1))
+            #f_out.write('repeat: '+str(i+1))
             self._reset_params()
             _params = filter(lambda p: p.requires_grad, self.model.parameters())
             optimizer = self.opt.optimizer(_params, lr=self.opt.learning_rate, weight_decay=self.opt.l2reg)
-            max_test_acc, max_test_f1 = self._train(criterion, optimizer)
+            max_test_acc, max_test_f1 = self._train(criterion, optimizer,f_out)
             print('max_test_acc: {0}     max_test_f1: {1}'.format(max_test_acc, max_test_f1))
             f_out.write('max_test_acc: {0}, max_test_f1: {1}'.format(max_test_acc, max_test_f1))
             max_test_acc_avg += max_test_acc
@@ -212,6 +222,7 @@ if __name__ == '__main__':
     parser.add_argument('--optimizer', default='adam', type=str)
     parser.add_argument('--initializer', default='xavier_uniform_', type=str)
     parser.add_argument('--learning_rate', default=0.001, type=float)
+    #default used to be 0.001
     parser.add_argument('--l2reg', default=0.00001, type=float)
     parser.add_argument('--num_epoch', default=100, type=int)
     parser.add_argument('--batch_size', default=32, type=int)
@@ -222,8 +233,10 @@ if __name__ == '__main__':
     parser.add_argument('--save', default=False, type=bool)
     parser.add_argument('--seed', default=776, type=int)
     parser.add_argument('--device', default=None, type=str)
+    parser.add_argument('--heads', default=8, type=int)
     parser.add_argument('--aspect_only_classifier', action="store_true")
     parser.add_argument('--load_model', default="", type=str)
+
     opt = parser.parse_args()
 
     model_classes = {
@@ -231,12 +244,14 @@ if __name__ == '__main__':
         'ascnn': ASCNN,
         'asgcn': ASGCN,
         'astcn': ASTCN,
+        'asgat': ASGAT,
     }
     input_colses = {
         'lstm': ['text_indices'],
         'ascnn': ['text_indices', 'aspect_indices', 'left_indices'],
         'asgcn': ['text_indices', 'aspect_indices', 'left_indices', 'dependency_graph'],
         'astcn': ['text_indices', 'aspect_indices', 'left_indices', 'dependency_tree'],
+        'asgat': ['text_indices', 'aspect_indices', 'left_indices', 'dependency_tree'],
     }
     initializers = {
         'xavier_uniform_': torch.nn.init.xavier_uniform_,
