@@ -27,13 +27,12 @@ Aspect-based sentiment analysis (ABSA) is a highly popular NLP task that aims to
 
    
 ## Reference
-The code in this repository is  dependent on [ASGCN](https://github.com/GeneZC/ASGCN) and[GAT](https://github.com/gordicaleksa/pytorch-GAT)
+The code in this repository is  dependent on [ASGCN](https://github.com/GeneZC/ASGCN).
 
 - Zhang, Chen and Li, Qiuchi and Song, Dawei. 
 "Aspect-based Sentiment Classification with Aspect-specific Graph Convolutional Networks". 
 Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP) 
 2019 Nov. Hong Kong, China. Association for Computational Linguistics. https://www.aclweb.org/anthology/D19-1464. 10.18653/v1/D19-1464",
 pages 4560-4570.
-- Gordić, Aleksa. Gordić2020PyTorchGAT. 2020. GitHub.https://github.com/gordicaleksa/pytorch-GAT.
 
 
