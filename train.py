@@ -135,7 +135,7 @@ class Instructor:
         f1 = metrics.f1_score(t_targets_all.cpu(), torch.argmax(t_outputs_all, -1).cpu(), labels=[0, 1, 2], average='macro')
         return test_acc, f1
 
-    def run(self, repeats=1):
+    def run(self, repeats=3):
         # Loss and Optimizer
         criterion = nn.CrossEntropyLoss()
 
