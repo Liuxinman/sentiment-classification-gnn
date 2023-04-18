@@ -1,23 +1,42 @@
 # sentiment-classification-gnn
-This is a course project for CSC2516, aimed at exploring the application of GNN in solving sentiment analysis tasks. The code in this repository is heavily dependent on [ASGCN](https://github.com/GeneZC/ASGCN).
+This is a course project for [CSC2516](https://artsci.calendar.utoronto.ca/course/csc413h1) Winter 2023. 
+We aimed at exploring the application of two different Graph Neural Network(GNN) in solving aspect-based sentiment analysis tasks(ABAS).
 
-## Resources
+## Abstract
+Aspect-based sentiment analysis is one of the most popular NLP techniques that identifying polarity towards a specific aspect.
+In this paper, we first implemented two deep-learning architectures --Graph Convolutional Network(GCN) and Graph Attention Network(GAT)-- in nowadays aspect-based sentiment analysis.
+We aimed to compare the performance between the two models on common benchmarks Semeval tasks from 2014 to 2016 to explore the best-performed model.
+Finally, we analyzed the difference between the results and discussed the limitations.
 
-1. [ATAE-LSTM](https://aclanthology.org/D16-1058.pdf) [[code](https://paperswithcode.com/paper/attention-based-lstm-for-aspect-level)]
-2. [ASGCN](https://aclanthology.org/D19-1464.pdf) [[code](https://github.com/GeneZC/ASGCN)]
-3. [BiGCN](https://aclanthology.org/2020.emnlp-main.286.pdf) [[code](https://aclanthology.org/2020.emnlp-main.286.pdf)]
-4. [TD-GAT](https://aclanthology.org/D19-1549.pdf) [[code](https://github.com/gordicaleksa/pytorch-GAT)] (没找到TD-GAT，但是有GAT的代码可参考)
+## Requirements
+- Python 3.6
+- PyTorch 1.0.0
+- SpaCy 2.0.18
+- Numpy 1.15.4
 
-## TODOs
+## Usage
+1. Install SpaCy package and language models with
+   ```
+   pip install spacy
+   ```
+   ```
+   python -m spacy download en
+   ```
+2. Generate graph data with ```python dependency_graph.py```
+3. Download pretrained GloVe embeddings with [Glove](https://nlp.stanford.edu/projects/glove/) and extract glove.840B.300d.txt into glove/.
+4. Train with command, optional arguments could be found in train.py. Our model has been pretrained so the current models are with the best performances.
+```python train.py --model_name asgcn --dataset rest14```
 
--   [x] 跑通ASGCN (配置环境，benchmark rest14) (3.28 ~ 4.1)
--   [ ] 研究ASGCN embedding部分的代码，提供如何改为pretrained bert的思路 (4.2 ~ 4.7)(Ruixuan, Xinman)
--   [ ] 将glove/lstm embedding替换为pretrained bert (4.2 ~ 4.7)(Ruixuan, Xinman)
--   [ ] 将conv aggregate改为attention（GCN -> GAT）(4.2 ~ 4.7)(Xinrong)
--   [ ] Train GCN, GAT, ATAE-LSTM
--   [ ] Test
 
-## Meetings
+   
+## Reference
+The code in this repository is  dependent on [ASGCN](https://github.com/GeneZC/ASGCN) and[GAT](https://github.com/gordicaleksa/pytorch-GAT)
 
--   [x] 4.2 Sunday 11:00am
--   [ ] 4.8 Saturday 11:00am
+- Zhang, Chen and Li, Qiuchi and Song, Dawei. 
+"Aspect-based Sentiment Classification with Aspect-specific Graph Convolutional Networks". 
+Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP) 
+2019 Nov. Hong Kong, China. Association for Computational Linguistics. https://www.aclweb.org/anthology/D19-1464. 10.18653/v1/D19-1464",
+pages 4560-4570.
+- Gordić, Aleksa. Gordić2020PyTorchGAT. 2020. GitHub.https://github.com/gordicaleksa/pytorch-GAT.
+
+
