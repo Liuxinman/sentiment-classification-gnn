@@ -21,7 +21,7 @@ Aspect-based sentiment analysis(ABAS) is one of the most popular NLP techniques 
    ```
 2. Generate graph data with ```python dependency_graph.py```
 3. Download pretrained GloVe embeddings with [Glove](https://nlp.stanford.edu/projects/glove/) and extract glove.840B.300d.txt into glove/.
-4. Train with command, optional arguments could be found in train.py. Our model has been pretrained so the current models are with the best performances.
+4. Train with command, optional arguments could be found in train.py.
 ```python train.py --model_name asgcn --dataset rest14```
 
 
